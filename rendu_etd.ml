@@ -1,4 +1,4 @@
-type dimension = int;; (*restreint aux entiers strictement positifs*)
+type dimension = int;; (*restreint aux entiers strictement positifs*)(*C'EST LA TAILLE DU TABLEAU*)
 
 type case = int * int * int;; (*restreint au triplet tels (i,j,k) tels que i+j+k=0*)
 
