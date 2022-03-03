@@ -23,9 +23,13 @@ let est_case ((i,j,k):case):bool=
  (i+j+k=0);;
 
 (*A REMPLIR*)
-let est_dans_etoile ((i, j, k) : case) (dim:dimension) : bool = true;;
+let est_dans_etoile ((i, j, k) : case) (dim:dimension) : bool = 
+  i < -dim && j < -dim && k < -dim && i >= -dim && j <= -dim && k <= -dim 
+;;
 
-let est_dans_losange ((i, j, k) : case)  (dim:dimension): bool =true;;           
+let est_dans_losange ((i, j, k) : case)  (dim:dimension): bool =
+  -dim <= j && k <= dim && -dim <= k && k <= dim 
+;;           
 let rec associe a l defaut=
   match l with
   | [] -> defaut
@@ -89,3 +93,41 @@ affiche conf_init;;
 (*A essayer apres avoir fait remplir_init
 affiche (remplir_init [Code "Ali";Code "Bob";Code "Jim"] 3);;
 *)
+
+let tourner_case (m:int) (c:case) : case =
+  let rec tourner_case_1 (m:int) (c:case) : case =
+    if m = 0 then
+      c
+    else
+      let (i,j,k)=tourner_case_1 (m-1) c in
+        let (i,j,k)=(-k,-i,-j) in
+          (i,j,k)
+  in
+  tourner_case_1 m c
+;;
+
+let translate (c:case) (v:vecteur) : case =
+  let (c1,c2,c3)=c in
+  let (v1,v2,v3)=v in
+  let (d1,d2,d3)=(c1+v1,c2+v2,c3+v3) in
+  (d1,d2,d3)
+;;
+
+let diff_case (l:case) (r:case) : vecteur =
+  let (l1,l2,l3)=l in
+  let (r1,r2,r3)=r in
+  let (v1,v2,v3)=(l1-r1,l2-r2,l3-r3) in
+  (v1,v2,v3)
+;;
+
+let sont_cases_voisines (l:case) (r:case) : bool =
+  let (l1,l2,l3)=l in 
+  let (r1,r2,r3)=r in 
+  let (k1,k2,k3)=(l1-r1,l2-r2,l3-r3) in
+  (k1= 1 && k2= -1 && k3=0) ||
+  (k1=1 && k2=0 && k3= -1) ||
+  (k1=0 && k2=1 && k3= -1) ||
+  (k1= -1 && k2=1 && k3=0) ||
+  (k1= -1 && k2=0 && k3=1) ||
+  (k1=0 && k2= -1 && k3=1)
+;;
