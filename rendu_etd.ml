@@ -131,3 +131,15 @@ let sont_cases_voisines (l:case) (r:case) : bool =
   (k1= -1 && k2=0 && k3=1) ||
   (k1=0 && k2= -1 && k3=1)
 ;;
+
+let abs (x:int) : int =
+  if x < 0 then -x else x
+;;
+
+let calcul_pivot ((x1,y1,z1):case) ((x2,y2,z2):case) : case option =
+  let (x,y,z)=(x2-x1,y2-y1,z2-z1) in
+  if x=0 then if y= -z && (abs(y) mod 2)=0 then ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
+  else if y=0 then if x= -z && (abs(x) mod 2)=0 then ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
+  else if z=0 then if y= -x && (abs(y) mod 2)=0 then ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
+ else None
+;;
