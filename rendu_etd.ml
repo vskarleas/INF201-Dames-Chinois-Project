@@ -138,8 +138,23 @@ let abs (x:int) : int =
 
 let calcul_pivot ((x1,y1,z1):case) ((x2,y2,z2):case) : case option =
   let (x,y,z)=(x2-x1,y2-y1,z2-z1) in
-  if x=0 then if y= -z && (abs(y) mod 2)=0 then ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
-  else if y=0 then if x= -z && (abs(x) mod 2)=0 then ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
-  else if z=0 then if y= -x && (abs(y) mod 2)=0 then ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
+  if x=0 then if y= -z && (abs(y) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
+  else if y=0 then if x= -z && (abs(x) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
+  else if z=0 then if y= -x && (abs(y) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
  else None
 ;;
+
+let vec_et_dist ((x1,y1,z1):case) ((x2,y2,z2):case) : vecteur*int =
+  let (x,y,z)=(x2-x1,y2-y1,z2-z1) in
+  if x=0 then
+    let d=abs y in
+    (x/d,y/d,z/d),d
+  else
+    if y=0 then
+    let d=abs z in
+    (x/d,y/d,z/d),d
+    else
+      let d=abs x in
+      (x/d,y/d,z/d),d (*Demander au prof d'ocaml*)
+;;
+
