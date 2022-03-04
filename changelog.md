@@ -11,7 +11,7 @@
 
 **Version 1.1.1**
 
-* dj
+* Project's name was changed
 
 *Posted: 4/2/2022 13:21*
 
