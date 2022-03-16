@@ -35,6 +35,7 @@ La formule booléenne qui est vraie si et seulement si une case est dans l’ét
 i < -dim && j < -dim && k < -dim && i >= -dim && j <= -dim && k <= -dim
 ```
 
+
 Implémentation :
 
 ```

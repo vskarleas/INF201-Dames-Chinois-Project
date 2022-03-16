@@ -24,7 +24,8 @@ let est_case ((i,j,k):case):bool=
 
 (*A REMPLIR*)
 let est_dans_etoile ((i, j, k) : case) (dim:dimension) : bool = 
-  i < -dim && j < -dim && k < -dim && i >= -dim && j <= -dim && k <= -dim 
+  (i>= -dim && j>= -dim && k>= -dim) || (i<=dim && j<=dim && k<=dim)
+
 ;;
 
 let est_dans_losange ((i, j, k) : case)  (dim:dimension): bool =
