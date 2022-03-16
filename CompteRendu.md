@@ -81,3 +81,53 @@ let diff_case (l:case) (r:case) : vecteur =
   (v1,v2,v3)
 ;;
 ```
+
+## Question 7
+
+```
+let sont_cases_voisines (l:case) (r:case) : bool =
+  let (l1,l2,l3)=l in 
+  let (r1,r2,r3)=r in 
+  let (k1,k2,k3)=(l1-r1,l2-r2,l3-r3) in
+  (k1= 1 && k2= -1 && k3=0) ||
+  (k1=1 && k2=0 && k3= -1) ||
+  (k1=0 && k2=1 && k3= -1) ||
+  (k1= -1 && k2=1 && k3=0) ||
+  (k1= -1 && k2=0 && k3=1) ||
+  (k1=0 && k2= -1 && k3=1)
+;;
+```
+
+## Question 8
+
+```
+let abs (x:int) : int =
+  if x < 0 then -x else x
+;;
+
+let calcul_pivot ((x1,y1,z1):case) ((x2,y2,z2):case) : case option =
+  let (x,y,z)=(x2-x1,y2-y1,z2-z1) in
+  if x=0 then if y= -z && (abs(y) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
+  else if y=0 then if x= -z && (abs(x) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
+  else if z=0 then if y= -x && (abs(y) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
+ else None
+;;
+```
+
+## Question 9
+
+```
+let vec_et_dist ((x1,y1,z1):case) ((x2,y2,z2):case) : vecteur*int =
+  let (x,y,z)=(x2-x1,y2-y1,z2-z1) in
+  if x=0 then
+    let d=abs y in
+    (x/d,y/d,z/d),d
+  else
+    if y=0 then
+    let d=abs z in
+    (x/d,y/d,z/d),d
+    else
+      let d=abs x in
+      (x/d,y/d,z/d),d (*Demander au prof d'ocaml*)
+;;
+```
