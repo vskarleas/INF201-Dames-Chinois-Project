@@ -32,7 +32,7 @@ Implémentation :
 La formule booléenne qui est vraie si et seulement si une case est dans l’étoile est :
 
 ```
-i < -dim && j < -dim && k < -dim && i >= -dim && j <= -dim && k <= -dim
+(i>= -dim && j>= -dim && k>= -dim) || (i<=dim && j<=dim && k<=dim)
 ```
 
 
@@ -40,7 +40,8 @@ Implémentation :
 
 ```
     let est_dans_étoile ((i,j,k):case) (dim:dimension) : bool =
-        i < -dim && j < -dim && k < -dim && i >= -dim && j <= -dim && k <= -dim 
+        (i>= -dim && j>= -dim && k>= -dim) || (i<=dim && j<=dim && k<=dim)
+
     ;;
 ```
 
