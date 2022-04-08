@@ -183,5 +183,76 @@ let rec remplir_segment (m:int)((i,j,k):case): case list =
 let rec remplir_triangle_bas (m:int)((i,j,k):case): case list =
   match m with
   | 0 -> []
-  | n -> (remplir_segment n (i-n+1,j-n+1, k))@(remplir_triangle_bas (n-1) (i,j,k))
+  | n -> (remplir_segment n (i,j, k))@(remplir_triangle_bas (n-1)) (i-1,j+1,k)
+;;
+
+let rec remplir_triangle_haut (m:int)((i,j,k):case): case list =
+  match m with
+  | 0 -> []
+  | n -> (remplir_segment n (i,j, k))@(remplir_triangle_haut (n-1) (i+1,j,k-1))
+;;
+
+let rec colorie (co:couleur) (list_ca:case list) : case_coloree list =
+  match list_ca with
+  | [] -> []
+  | pr::fin -> (pr, co)::(colorie co fin)
+;;
+
+let nombre_joueurs (liste_couleur:couleur list) : int =
+  List.length liste_couleur
+;;
+
+let rec tourner_liste_case_coloree (m:int) (liste_case_coloree:case_coloree list) : case_coloree list =
+  match liste_case_coloree with
+  | [] -> []
+  | (case,couleur)::fin -> (tourner_case m case, couleur)::tourner_liste_case_coloree m fin
+;;
+
+let tourner_config (config:configuration) : configuration =
+  let (liste_case_coloree,liste_couleur,dim)=config in
+  let nb_joueurs=nombre_joueurs liste_couleur in
+  (tourner_liste_case_coloree (6/nb_joueurs) liste_case_coloree,liste_couleur,dim)
+;;
+
+let rec remplir_liste_case_coloree (nb_joueurs:int) (joueurs:couleur list) (dim:dimension) : case_coloree list =
+  match joueurs with
+  | [] -> []
+  | pr::fin -> (colorie pr (remplir_triangle_bas dim (-dim-1,1,dim)))@(tourner_liste_case_coloree (6/nb_joueurs) (remplir_liste_case_coloree nb_joueurs fin dim))
+;;
+
+let remplir_init (joueurs:couleur list) (dim:dimension) : configuration =
+  let liste_cases_coloree=
+  remplir_liste_case_coloree (nombre_joueurs joueurs) joueurs dim
+  in (liste_cases_coloree,joueurs,dim)
+;;
+
+let quelle_couleur (ca:case) (co:configuration) : couleur =
+  let (liste_case_coloree,liste_couleur,dim)=co in
+  associe ca liste_case_coloree Libre
+;;
+
+let rec supprime_dans_config (conf:configuration) (c:case) : configuration =
+  let (liste_case_coloree,liste_couleur,dim) = conf in
+  ((List.filter (fun (ca,co) -> ca<>c) liste_case_coloree),liste_couleur,dim)
+;;
+
+let est_coup_valide (conf:configuration) (Du(c1,c2):coup) : bool =
+  let (liste_case_coloree,liste_couleur,dim)=conf in
+  let joueur_courant::fin= liste_couleur in
+  (sont_cases_voisines c1 c2) && 
+  (associe c1 liste_case_coloree Libre)=joueur_courant &&
+  (associe c2 liste_case_coloree Libre)=Libre &&
+  (est_dans_losange c2 dim)
+;;
+
+let appliquer_coup (conf:configuration) (Du(c1,c2)) : configuration =
+  let (liste_case_coloree,liste_couleur,dim)=conf in
+  let joueur_courant::fin= liste_couleur in
+  let nouvelle_conf=supprime_dans_config conf c1 in
+  let (liste_case_coloree,liste_couleur,dim)=nouvelle_conf in
+  (liste_case_coloree@[(c2,joueur_courant)],liste_couleur,dim)
+;;
+
+let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
+  if est_coup_valide conf c then appliquer_coup conf c else conf
 ;;

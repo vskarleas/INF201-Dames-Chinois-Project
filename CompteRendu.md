@@ -1,6 +1,6 @@
 # Compte Rendu
 
-## Question 1
+## **Question 1**
 
 - i < -dim correspond au **camp du Sud**
 - i > dim correspond au **camp du Nord**
@@ -11,7 +11,7 @@
 
 ![alt text](./image/CompteRendu/1646328781217.png)
 
-## Question 2
+## **Question 2**
 
 La formule booléenne qui est vraie si et seulement si une case est dans le losange Nord-Sud :
 
@@ -27,7 +27,7 @@ Implémentation :
     ;;
 ```
 
-## Question 3
+## **Question 3**
 
 La formule booléenne qui est vraie si et seulement si une case est dans l’étoile est :
 
@@ -44,7 +44,7 @@ Implémentation :
     ;;
 ```
 
-## Question 4
+## **Question 4**
 
 ```ocaml
 let tourner_case (m:int) (c:case) : case =
@@ -60,7 +60,7 @@ let tourner_case (m:int) (c:case) : case =
 ;;
 ```
 
-## Question 5
+## **Question 5**
 
 ```ocaml
 let translate (c:case) (v:vecteur) : case =
@@ -71,7 +71,7 @@ let translate (c:case) (v:vecteur) : case =
 ;;
 ```
 
-## Question 6
+## **Question 6**
 
 ```ocaml
 let diff_case (l:case) (r:case) : vecteur =
@@ -82,7 +82,7 @@ let diff_case (l:case) (r:case) : vecteur =
 ;;
 ```
 
-## Question 7
+## **Question 7**
 
 ```ocaml
 let sont_cases_voisines (l:case) (r:case) : bool =
@@ -98,7 +98,7 @@ let sont_cases_voisines (l:case) (r:case) : bool =
 ;;
 ```
 
-## Question 8
+## **Question 8**
 
 ```ocaml
 let abs (x:int) : int =
@@ -114,7 +114,7 @@ let calcul_pivot ((x1,y1,z1):case) ((x2,y2,z2):case) : case option =
 ;;
 ```
 
-## Question 9
+## **Question 9**
 
 ```ocaml
 let vec_et_dist ((x1,y1,z1):case) ((x2,y2,z2):case) : vecteur*int =
@@ -132,7 +132,7 @@ let vec_et_dist ((x1,y1,z1):case) ((x2,y2,z2):case) : vecteur*int =
 ;;
 ```
 
-## Question 10
+## **Question 10**
 
 ### Réalisation
 
@@ -168,7 +168,7 @@ let rec der_liste (l:'a list) : 'a =
 ;;
 ```
 
-## Question 11
+## **Question 11**
 
 ### Réalisation
 
@@ -192,7 +192,7 @@ let rec remplir_segment (m:int)((i,j,k):case): case list =
 ;;
 ```
 
-## Question 12
+## **Question 12**
 
 ### Réalisation
 
@@ -201,17 +201,191 @@ let rec remplir_segment (m:int)((i,j,k):case): case list =
 - **Algorithme** : déf réc de la fonction par équations.
 - **Équations récursives** :
 
-1. remplir_segment(0,c)=[]
-2. remplir_segment(1,c)=[c]
-3. remplir_segment(x,(c1,c2,c3))=[c]@remplir_segment(x-1 (c1,c2+1,c3-1))
+1. remplir_triangle_bas 0 c =[]
+2. remplir_triangle_bas n c = (remplir_segment n (i,j, k))@(remplir_triangle_bas (n-1) (i+1,j,k-1))
 
 - **Implémentation** :
 
 ```ocaml
-let rec remplir_segment (m:int)((i,j,k):case): case list =
+let rec remplir_triangle_bas (m:int)((i,j,k):case): case list =
   match m with
   | 0 -> []
-  | 1 -> [(i,j,k)]
-  | x -> [(i,j,k)]@(remplir_segment (x-1) (i,j+1,k-1))
+  | n -> (remplir_segment n (i,j, k))@(remplir_triangle_bas (n-1) (i-1,j+1,k))
+;;
+```
+
+## **Question 13**
+
+### Réalisation
+
+#### remplir_triangle_haut
+
+- **Algorithme** : déf réc de la fonction par équations.
+- **Équations récursives** :
+
+1. remplir_triangle_bas 0 c =[]
+2. remplir_triangle_bas n c = (remplir_segment n (i,j, k))@(remplir_triangle_bas (n-1) (i-1,j+1,k))
+
+- **Implémentation** :
+
+```ocaml
+let rec remplir_triangle_haut (m:int)((i,j,k):case): case list =
+  match m with
+  | 0 -> []
+  | n -> (remplir_segment n (i,j, k))@(remplir_triangle_haut (n-1) (i+1,j,k-1))
+;;
+```
+
+## **Question 14**
+
+### Implémentation
+
+```ocaml
+let rec colorie (co:couleur) (list_ca:case list) : case_coloree list =
+  match list_ca with
+  | [] -> []
+  | pr::fin -> (pr, co)::(colorie co fin)
+;;
+```
+
+## **Question 15**
+
+### Implémentation
+
+```ocaml
+let nombre_joueurs (liste_couleur:couleur list) : int =
+  List.length liste_couleur
+;;
+
+let rec tourner_liste_case_coloree (m:int) (liste_case_coloree:case_coloree list) : case_coloree list =
+  match liste_case_coloree with
+  | [] -> []
+  | (case,couleur)::fin -> (tourner_case m case, couleur)::tourner_liste_case_coloree m fin
+;;
+
+let tourner_config (config:configuration) : configuration =
+  let (liste_case_coloree,liste_couleur,dim)=config in
+  let nb_joueurs=nombre_joueurs liste_couleur in
+  (tourner_liste_case_coloree (6/nb_joueurs) liste_case_coloree,liste_couleur,dim)
+;;
+```
+
+## **Question 16**
+
+### Implémentation
+
+```ocaml
+let rec remplir_liste_case_coloree (nb_joueurs:int) (joueurs:couleur list) (dim:dimension) : case_coloree list =
+  match joueurs with
+  | [] -> []
+  | pr::fin -> (colorie pr (remplir_triangle_bas dim (-dim-1,1,dim)))@(tourner_liste_case_coloree (6/nb_joueurs) (remplir_liste_case_coloree nb_joueurs fin dim))
+;;
+
+let remplir_init (joueurs:couleur list) (dim:dimension) : configuration =
+  let liste_cases_coloree=
+  remplir_liste_case_coloree (nombre_joueurs joueurs) joueurs dim
+  in (liste_cases_coloree,joueurs,dim)
+;;
+```
+### Test
+```ocaml
+affiche (remplir_init [Vert; Bleu; Code("Let")] 3);;
+                                                                        
+                                        .                                      
+
+
+                                     .     .                                   
+
+
+                                  .     .     .                                
+
+
+            Let   Let   Let    .     .     .     .     B     B     B           
+
+
+               Let   Let    .     .     .     .     .     B     B              
+
+
+                  Let    .     .     .     .     .     .     B                 
+
+
+                      .     .     .     .     .     .     .                    
+
+
+                   .     .     .     .     .     .     .     .                 
+
+
+                .     .     .     .     .     .     .     .     .              
+
+
+             .     .     .     .     .     .     .     .     .     .           
+
+
+                                  V     V     V                                
+
+
+                                     V     V                                   
+
+
+                                        V                                      
+```
+
+## **Question 17**
+
+### Implémentation
+
+```ocaml
+let quelle_couleur (ca:case) (co:configuration) : couleur =
+  let (liste_case_coloree,liste_couleur,dim)=co in
+  associe ca liste_case_coloree Libre
+;;
+```
+### **Question 18**
+
+### Implémentation
+
+```ocaml
+let rec supprime_dans_config (conf:configuration) (c:case) : configuration =
+  let (liste_case_coloree,liste_couleur,dim) = conf in
+  ((List.filter (fun (ca,co) -> ca<>c) liste_case_coloree),liste_couleur,dim)
+;;
+```
+
+## **Question 19**
+
+### Implémentation
+
+```ocaml
+let est_coup_valide (conf:configuration) (Du(c1,c2):coup) : bool =
+  let (liste_case_coloree,liste_couleur,dim)=conf in
+  let joueur_courant::fin= liste_couleur in
+  (sont_cases_voisines c1 c2) && 
+  (associe c1 liste_case_coloree Libre)=joueur_courant &&
+  (associe c2 liste_case_coloree Libre)=Libre &&
+  (est_dans_losange c2 dim)
+;;
+```
+
+### **Question 20**
+
+### Implémentation
+
+```ocaml
+let appliquer_coup (conf:configuration) (Du(c1,c2)) : configuration =
+  let (liste_case_coloree,liste_couleur,dim)=conf in
+  let joueur_courant::fin= liste_couleur in
+  let nouvelle_conf=supprime_dans_config conf c1 in
+  let (liste_case_coloree,liste_couleur,dim)=nouvelle_conf in
+  (liste_case_coloree@[(c2,joueur_courant)],liste_couleur,dim)
+;;
+```
+
+## **Question 21**
+
+### Implémentation
+
+```ocaml
+let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
+  if est_coup_valide conf c then appliquer_coup conf c else conf
 ;;
 ```
