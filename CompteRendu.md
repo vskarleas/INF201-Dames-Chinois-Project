@@ -15,13 +15,13 @@
 
 La formule booléenne qui est vraie si et seulement si une case est dans le losange Nord-Sud :
 
-```
+```ocaml
 -dim <= j && k <= dim && -dim <= k && k <= dim\
 ```
 
 Implémentation :
 
-```
+```ocaml
     let est_dans_losange ((i,j,k):case) (dim:dimension) : bool =
         -dim <= j && k <= dim && -dim <= k && k <= dim 
     ;;
@@ -35,10 +35,9 @@ La formule booléenne qui est vraie si et seulement si une case est dans l’ét
 (i>= -dim && j>= -dim && k>= -dim) || (i<=dim && j<=dim && k<=dim)
 ```
 
-
 Implémentation :
 
-```
+```ocaml
     let est_dans_étoile ((i,j,k):case) (dim:dimension) : bool =
         (i>= -dim && j>= -dim && k>= -dim) || (i<=dim && j<=dim && k<=dim)
 
@@ -47,7 +46,7 @@ Implémentation :
 
 ## Question 4
 
-```
+```ocaml
 let tourner_case (m:int) (c:case) : case =
   let rec tourner_case_1 (m:int) (c:case) : case =
     if m = 0 then
@@ -63,7 +62,7 @@ let tourner_case (m:int) (c:case) : case =
 
 ## Question 5
 
-```
+```ocaml
 let translate (c:case) (v:vecteur) : case =
   let (c1,c2,c3)=c in
   let (v1,v2,v3)=v in
@@ -74,7 +73,7 @@ let translate (c:case) (v:vecteur) : case =
 
 ## Question 6
 
-```
+```ocaml
 let diff_case (l:case) (r:case) : vecteur =
   let (l1,l2,l3)=l in
   let (r1,r2,r3)=r in
@@ -85,7 +84,7 @@ let diff_case (l:case) (r:case) : vecteur =
 
 ## Question 7
 
-```
+```ocaml
 let sont_cases_voisines (l:case) (r:case) : bool =
   let (l1,l2,l3)=l in 
   let (r1,r2,r3)=r in 
@@ -101,7 +100,7 @@ let sont_cases_voisines (l:case) (r:case) : bool =
 
 ## Question 8
 
-```
+```ocaml
 let abs (x:int) : int =
   if x < 0 then -x else x
 ;;
@@ -117,7 +116,7 @@ let calcul_pivot ((x1,y1,z1):case) ((x2,y2,z2):case) : case option =
 
 ## Question 9
 
-```
+```ocaml
 let vec_et_dist ((x1,y1,z1):case) ((x2,y2,z2):case) : vecteur*int =
   let (x,y,z)=(x2-x1,y2-y1,z2-z1) in
   if x=0 then
@@ -130,5 +129,89 @@ let vec_et_dist ((x1,y1,z1):case) ((x2,y2,z2):case) : vecteur*int =
     else
       let d=abs x in
       (x/d,y/d,z/d),d (*Demander au prof d'ocaml*)
+;;
+```
+
+## Question 10
+
+### Réalisation
+
+#### tourner_liste
+
+- **Algorithme** : Disjonction des cas vide et non vide. Pour le cas vide on renvoie vide et on renvoie la fin de la liste concaténé au premier élément.
+- **Implémentation** :
+
+```ocaml
+let tourner_liste (l : 'a list) : 'a list =
+  if l=[]
+    then []
+  else let (pr::fin)=l in
+    fin@[pr]
+;;
+```
+
+#### der_liste
+
+- **Algorithme** : En utilisant la récursivité et des structures conditionnelles on traite les cas avec un seul élément et plusieurs.
+- **Équations récursives** :
+
+1. der_liste(pr::[]) = pr
+2. der_liste(pr::fin) = der_liste fin
+
+- **Implémentation** :
+
+```ocaml
+let rec der_liste (l:'a list) : 'a =
+  match l with
+  |pr::[] -> pr
+  |pr::fin -> der_liste fin
+;;
+```
+
+## Question 11
+
+### Réalisation
+
+#### remplir_segment
+
+- **Algorithme** : déf réc de la fonction par équations.
+- **Équations récursives** :
+
+1. remplir_segment(0,c)=[]
+2. remplir_segment(1,c)=[c]
+3. remplir_segment(x,(c1,c2,c3))=[c]@remplir_segment(x-1 (c1,c2+1,c3-1))
+
+- **Implémentation** :
+
+```ocaml
+let rec remplir_segment (m:int)((i,j,k):case): case list =
+  match m with
+  | 0 -> []
+  | 1 -> [(i,j,k)]
+  | x -> [(i,j,k)]@(remplir_segment (x-1) (i,j+1,k-1))
+;;
+```
+
+## Question 12
+
+### Réalisation
+
+#### remplir_triangle_bas
+
+- **Algorithme** : déf réc de la fonction par équations.
+- **Équations récursives** :
+
+1. remplir_segment(0,c)=[]
+2. remplir_segment(1,c)=[c]
+3. remplir_segment(x,(c1,c2,c3))=[c]@remplir_segment(x-1 (c1,c2+1,c3-1))
+
+- **Implémentation** :
+
+```ocaml
+let rec remplir_segment (m:int)((i,j,k):case): case list =
+  match m with
+  | 0 -> []
+  | 1 -> [(i,j,k)]
+  | x -> [(i,j,k)]@(remplir_segment (x-1) (i,j+1,k-1))
 ;;
 ```

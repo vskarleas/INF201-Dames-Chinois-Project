@@ -159,3 +159,29 @@ let vec_et_dist ((x1,y1,z1):case) ((x2,y2,z2):case) : vecteur*int =
       (x/d,y/d,z/d),d (*Demander au prof d'ocaml*)
 ;;
 
+let tourner_liste (l : 'a list) : 'a list =
+  if l=[]
+    then []
+  else let (pr::fin)=l in
+    fin@[pr]
+;;
+
+let rec der_liste (l:'a list) : 'a =
+  match l with
+  |pr::[] -> pr
+  |pr::fin -> der_liste fin
+;;
+
+let rec remplir_segment (m:int)((i,j,k):case): case list =
+  match m with
+  | 0 -> []
+  | 1 -> [(i,j,k)]
+  | x -> [(i,j,k)]@(remplir_segment (x-1) (i,j+1,k-1))
+;;
+
+
+let rec remplir_triangle_bas (m:int)((i,j,k):case): case list =
+  match m with
+  | 0 -> []
+  | n -> (remplir_segment n (i-n+1,j-n+1, k))@(remplir_triangle_bas (n-1) (i,j,k))
+;;
