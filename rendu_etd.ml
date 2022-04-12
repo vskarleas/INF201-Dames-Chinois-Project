@@ -156,7 +156,7 @@ let vec_et_dist ((x1,y1,z1):case) ((x2,y2,z2):case) : vecteur*int =
     (x/d,y/d,z/d),d
     else
       let d=abs x in
-      (x/d,y/d,z/d),d (*Demander au prof d'ocaml*)
+      (x/d,y/d,z/d),d
 ;;
 
 let tourner_liste (l : 'a list) : 'a list =
