@@ -257,4 +257,8 @@ let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
   if est_coup_valide conf c then  appliquer_coup conf c else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
 ;;
 
-
+let rec est_libre_seg (c1:case)(c2:case)(c:configuration):bool=
+let (vec,dist)=vec_et_dist c1 c2 in match dist with
+| 0 -> true
+| x -> let opo=c1+vec in (quelle_couleur opo c) && (est_libre_seg opo c2 c)
+;;
