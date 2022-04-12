@@ -262,6 +262,6 @@ let addition_vecteur ((x1,x2,x3):case)((y1,y2,y3):case):case =
 
 let rec est_libre_seg (c1:case)(c2:case)(c:configuration):bool=
 let (vec,dist)=vec_et_dist c1 c2 in match dist with
-| 0 -> true
+| 1 -> true
 | x -> (quelle_couleur (addition_vecteur c1 vec) c)=Libre && (est_libre_seg (addition_vecteur c1 vec) c2 c)
 ;;
