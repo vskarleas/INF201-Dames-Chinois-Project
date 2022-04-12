@@ -254,5 +254,7 @@ let appliquer_coup (conf:configuration) (Du(c1,c2)) : configuration =
 ;;
 
 let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
-  if est_coup_valide conf c then appliquer_coup conf c else conf
+  if est_coup_valide conf c then  appliquer_coup conf c else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
 ;;
+
+

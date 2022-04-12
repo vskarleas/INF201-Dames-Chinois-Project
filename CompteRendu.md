@@ -287,47 +287,49 @@ let remplir_init (joueurs:couleur list) (dim:dimension) : configuration =
   in (liste_cases_coloree,joueurs,dim)
 ;;
 ```
+
 ### Test
+
 ```ocaml
 affiche (remplir_init [Vert; Bleu; Code("Let")] 3);;
-                                                                        
-                                        .                                      
+                                                                      
+                                        .                                    
 
 
-                                     .     .                                   
+                                     .     .                                 
 
 
-                                  .     .     .                                
+                                  .     .     .                              
 
 
-            Let   Let   Let    .     .     .     .     B     B     B           
+            Let   Let   Let    .     .     .     .     B     B     B         
 
 
-               Let   Let    .     .     .     .     .     B     B              
+               Let   Let    .     .     .     .     .     B     B            
 
 
-                  Let    .     .     .     .     .     .     B                 
+                  Let    .     .     .     .     .     .     B               
 
 
-                      .     .     .     .     .     .     .                    
+                      .     .     .     .     .     .     .                  
 
 
-                   .     .     .     .     .     .     .     .                 
+                   .     .     .     .     .     .     .     .               
 
 
-                .     .     .     .     .     .     .     .     .              
+                .     .     .     .     .     .     .     .     .            
 
 
-             .     .     .     .     .     .     .     .     .     .           
+             .     .     .     .     .     .     .     .     .     .         
 
 
-                                  V     V     V                                
+                                  V     V     V                              
 
 
-                                     V     V                                   
+                                     V     V                                 
 
 
-                                        V                                      
+                                        V                                    
 ```
 
 ## **Question 17**
@@ -340,6 +342,7 @@ let quelle_couleur (ca:case) (co:configuration) : couleur =
   associe ca liste_case_coloree Libre
 ;;
 ```
+
 ### **Question 18**
 
 ### Implémentation
@@ -386,6 +389,7 @@ let appliquer_coup (conf:configuration) (Du(c1,c2)) : configuration =
 
 ```ocaml
 let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
-  if est_coup_valide conf c then appliquer_coup conf c else conf
+  if est_coup_valide conf c then  appliquer_coup conf c else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
 ;;
+
 ```
