@@ -292,44 +292,44 @@ let remplir_init (joueurs:couleur list) (dim:dimension) : configuration =
 
 ```ocaml
 affiche (remplir_init [Vert; Bleu; Code("Let")] 3);;
-                                                                      
-                                        .                                    
+                                                                    
+                                        .                                  
 
 
-                                     .     .                                 
+                                     .     .                               
 
 
-                                  .     .     .                              
+                                  .     .     .                            
 
 
-            Let   Let   Let    .     .     .     .     B     B     B         
+            Let   Let   Let    .     .     .     .     B     B     B       
 
 
-               Let   Let    .     .     .     .     .     B     B            
+               Let   Let    .     .     .     .     .     B     B          
 
 
-                  Let    .     .     .     .     .     .     B               
+                  Let    .     .     .     .     .     .     B             
 
 
-                      .     .     .     .     .     .     .                  
+                      .     .     .     .     .     .     .                
 
 
-                   .     .     .     .     .     .     .     .               
+                   .     .     .     .     .     .     .     .             
 
 
-                .     .     .     .     .     .     .     .     .            
+                .     .     .     .     .     .     .     .     .          
 
 
-             .     .     .     .     .     .     .     .     .     .         
+             .     .     .     .     .     .     .     .     .     .       
 
 
-                                  V     V     V                              
+                                  V     V     V                            
 
 
-                                     V     V                                 
+                                     V     V                               
 
 
-                                        V                                    
+                                        V                                  
 ```
 
 ## **Question 17**
@@ -406,7 +406,6 @@ let (vec,dist)=vec_et_dist c1 c2 in match dist with
 ;;
 ```
 
-
 ## Question 23
 
 ### Implementation
@@ -416,4 +415,16 @@ let est_saut (c1:case)(c2:case)(c:configuration):bool =
   let pivot=(calcul_pivot c1 c2) in
   if pivot=None then false
   else let Some(case_pivot)=pivot in (est_libre_seg c1 case_pivot c) && (est_libre_seg case_pivot c2 c) && (quelle_couleur c2 c)=Libre;;
+```
+
+## Question 24
+
+### Implementation
+
+```
+let rec est_saut_multiple (liste_cases:case list)(config:configuration):bool =
+  match liste_cases with
+  |[c1;c2] -> est_saut c1 c2 config
+  |c1::fin -> let c2::fin2=fin in est_saut c1 c2 config && est_saut_multiple fin config
+;;
 ```
