@@ -405,3 +405,12 @@ let (vec,dist)=vec_et_dist c1 c2 in match dist with
 | x -> (quelle_couleur (addition_vecteur c1 vec) c)=Libre && (est_libre_seg (addition_vecteur c1 vec) c2 c)
 ;;
 ```
+
+
+## Question 23
+
+### Implementation
+
+```
+
+```
