@@ -401,7 +401,7 @@ let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
 ```
 let rec est_libre_seg (c1:case)(c2:case)(c:configuration):bool=
 let (vec,dist)=vec_et_dist c1 c2 in match dist with
-| 0 -> true
+| 1 -> true
 | x -> (quelle_couleur (addition_vecteur c1 vec) c)=Libre && (est_libre_seg (addition_vecteur c1 vec) c2 c)
 ;;
 ```
@@ -412,5 +412,8 @@ let (vec,dist)=vec_et_dist c1 c2 in match dist with
 ### Implementation
 
 ```
-
+let est_saut (c1:case)(c2:case)(c:configuration):bool =
+  let pivot=(calcul_pivot c1 c2) in
+  if pivot=None then false
+  else let Some(case_pivot)=pivot in if (est_libre_seg c1 case_pivot c) && (est_libre_seg case_pivot c2 c) && (quelle_couleur c2 c)=Libre then true else false;;
 ```
