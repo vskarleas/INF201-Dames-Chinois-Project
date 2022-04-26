@@ -211,7 +211,7 @@ let rec tourner_liste_case_coloree (m:int) (liste_case_coloree:case_coloree list
 let tourner_config (config:configuration) : configuration =
   let (liste_case_coloree,liste_couleur,dim)=config in
   let nb_joueurs=nombre_joueurs liste_couleur in
-  (tourner_liste_case_coloree (6/nb_joueurs) liste_case_coloree,liste_couleur,dim)
+  (tourner_liste_case_coloree (6/nb_joueurs) liste_case_coloree,tourner_liste liste_couleur,dim)
 ;;
 
 let rec remplir_liste_case_coloree (nb_joueurs:int) (joueurs:couleur list) (dim:dimension) : case_coloree list =
@@ -346,3 +346,76 @@ let rec score_max_joueur (ligne:int)(dim:dimension) : int =
 let score_gagnant (dim:dimension) : int =
   score_max_joueur dim dim
 ;;
+
+let gagne (conf:configuration) : bool =
+  let (_,_,dim)= conf in
+  score conf = score_gagnant dim
+;;
+
+let manche (conf,co:configuration*couleur) (c:coup): configuration*couleur =
+  if co==Libre then
+    let nouvelle_conf=mettre_a_jour_configuration conf c in
+    let gagnant= if gagne nouvelle_conf then let (_,joueur_courant::fin,_)= nouvelle_conf in joueur_courant else Libre in
+    tourner_config nouvelle_conf, gagnant
+  else
+    conf,co
+  ;;
+
+let est_partie (conf:configuration) (liste_coup:coup list): couleur =
+  let _,couleur = List.fold_left manche (conf,Libre) liste_coup in
+  couleur
+;;
+
+let liste_coup_test : coup list = 
+[Du((-6, 3, 3), (-2, 1, 1));
+Du((-5, 3, 2), (-3, 3, 0));
+Sm([(-5, 2, 3); (-3, 2, 1)]);
+Sm([(-4, 2, 2); (0, 0, 0)]);
+Sm([(-5, 2, 3); (-3, 2, 1)]);
+Sm([(-5, 3, 2); (-3, 3, 0)]);
+Sm([(-2, 1, 1); (2, -1, -1)]);
+Sm([(-4, 2, 2); (-2, 2, 0)]);
+Sm([(-4, 3, 1); (-2, 1, 1)]);
+Sm([(-5, 3, 2); (-3, 3, 0)]);
+Sm([(-4, 3, 1); (-2, 1, 1)]);
+Sm([(-4, 2, 2); (-2, 2, 0)]);
+Sm([(0, 0, 0); (4, -2, -2)]);
+Sm([(-3, 2, 1); (-1, 0, 1)]);
+Sm([(-3, 2, 1); (-1, 0, 1)]);
+Sm([(-5, 2, 3); (-3, 0, 3)]);
+Sm([(-1, 0, 1); (3, -2, -1)]);
+Sm([(-6, 3, 3); (2, -1, -1)]);
+Sm([(2, -1, -1); (6, -3, -3)]);
+Sm([(-4, 1, 3); (0, 1, -1)]);
+Sm([(-1, 0, 1); (3, -2, -1)]);
+Sm([(-3, 0, 3); (1, 0, -1)]);
+Sm([(-2, 2, 0); (2, 0, -2)]);
+Sm([(-2, 1, 1); (6, -3, -3)]);
+Sm([(-4, 3, 1); (0, 1, -1)]);
+Sm([(-3, 3, 0); (-1, -1, 2)]);
+Sm([(2, -1, -1); (4, -3, -1)]);
+Sm([(0, 1, -1); (4, -1, -3)]);
+Sm([(-2, 1, 1); (2, 1, -3)]);
+Sm([(-2, 2, 0); (0, 0, 0)]);
+Sm([(1, 0, -1); (3, -2, -1)]);
+Sm([(-6, 3, 3); (6, -3, -3)]);
+Sm([(-4, 1, 3); (4, -1, -3)]);
+Sm([(3, -2, -1); (5, -2, -3)]);
+Sm([(2, 1, -3); (4, -1, -3)]);
+Sm([(0, 0, 0); (2, -2, 0)]);
+Sm([(-4, 1, 3); (0, -1, 1)]);
+Du((-1, -1, 2), (0, -1, 1));
+Sm([(2, -2, 0); (4, -2, -2)]);
+Sm([(-3, 3, 0); (-1, 1, 0)]);
+Sm([(0, 1, -1); (2, -1, -1)]);
+Sm([(-3, 3, 0); (1, -1, 0)]);
+Sm([(-1, 1, 0); (3, -1, -2)]);
+Du((0, -1, 1), (1, -1, 0));
+Sm([(1, -1, 0); (5, -3, -2)]);
+Du((0, -1, 1), (1, -1, 0));
+Sm([(1, -1, 0); (3, -1, -2)]);
+Sm([(3, -2, -1); (5, -2, -3)]);]
+;;
+
+let conf_essai : configuration =
+  ([(-4, 1, 3),Vert; (-4, 2, 2), Vert; (-4, 3, 1),Vert; (-5, 3, 2), Vert; (-6, 3, 3),Vert; (-5, 2, 3),Vert; (3, -6, 3),Jaune; (3, -5, 2),Jaune; (3, -4, 1),Jaune; (2, -4, 2),Jaune; (1, -4, 3),Jaune; (2, -5, 3),Jaune; (3, 1, -4),Rouge; (2, 2, -4),Rouge; (1, 3, -4),Rouge; (3, 2, -5),Rouge; (2, 3, -5),Rouge; (3, 3, -6),Rouge], [Vert; Jaune; Rouge], 3);;
