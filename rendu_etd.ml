@@ -268,7 +268,7 @@ let (vec,dist)=vec_et_dist c1 c2 in match dist with
 | 1 -> (quelle_couleur c2 c)=Libre
 | x -> (quelle_couleur (addition_vecteur c1 vec) c)=Libre && (est_libre_seg (addition_vecteur c1 vec) c2 c)
 ;;
-
+(*
 let est_saut (c1:case)(c2:case)(c:configuration):bool =
   let pivot=(calcul_pivot c1 c2) in
   let vec,_=vec_et_dist c1 c2 in
@@ -320,6 +320,29 @@ let appliquer_coup_1 (conf:configuration) (liste_cases:case list) : configuratio
 let mettre_a_jour_configuration_1 (conf:configuration) (liste_cases:case list) : configuration =
     if est_coup_valide_1 conf liste_cases then  appliquer_coup_1 conf liste_cases else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
 ;;
-
+*)
 let conf_essai = ([(-6, 3, 3),Vert; (-4, 3, 1),Vert; (-1, 2, -1),Vert],[Vert], 3)
 let coup_essai = [(-6, 3, 3); (-2, 3, -1); (0, 1, -1)]
+
+let augmente_score (score,conf:int*configuration) ((i,j,k),couleur : case_coloree) : int*configuration =
+  let (liste_case_coloree,liste_couleur,dim) = conf in
+  let protagoniste::_ = liste_couleur in
+  if couleur = protagoniste then (score + i,conf) else (score,conf);;
+
+let score (conf:configuration) : int =
+  let (liste_case_coloree,liste_couleur,dim)= conf in
+  let score_joueur,_=(List.fold_left augmente_score (0,conf) liste_case_coloree) in 
+  score_joueur
+;;
+
+let conf_essai :configuration = ([(1, -1, 0),Vert; (0, 1, -1),Vert; (-1, 0, 1),Rouge; (-1, -1, 2), Vert; (2, -2, 2),Vert],[Rouge;Vert],3);;
+
+let rec score_max_joueur (ligne:int)(dim:dimension) : int =
+  match ligne with
+  | 0 -> 0
+  | n -> (dim+1-n)*(dim+n) + score_max_joueur (n-1) dim
+;;
+
+let score_gagnant (dim:dimension) : int =
+  score_max_joueur dim dim
+;;
