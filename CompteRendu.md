@@ -292,44 +292,44 @@ let remplir_init (joueurs:couleur list) (dim:dimension) : configuration =
 
 ```ocaml
 affiche (remplir_init [Vert; Bleu; Code("Let")] 3);;
-                                                                    
-                                        .                                  
+                                                                
+                                        .                              
 
 
-                                     .     .                               
+                                     .     .                           
 
 
-                                  .     .     .                            
+                                  .     .     .                        
 
 
-            Let   Let   Let    .     .     .     .     B     B     B       
+            Let   Let   Let    .     .     .     .     B     B     B   
 
 
-               Let   Let    .     .     .     .     .     B     B          
+               Let   Let    .     .     .     .     .     B     B      
 
 
-                  Let    .     .     .     .     .     .     B             
+                  Let    .     .     .     .     .     .     B         
 
 
-                      .     .     .     .     .     .     .                
+                      .     .     .     .     .     .     .            
 
 
-                   .     .     .     .     .     .     .     .             
+                   .     .     .     .     .     .     .     .         
 
 
-                .     .     .     .     .     .     .     .     .          
+                .     .     .     .     .     .     .     .     .      
 
 
-             .     .     .     .     .     .     .     .     .     .       
+             .     .     .     .     .     .     .     .     .     .   
 
 
-                                  V     V     V                            
+                                  V     V     V                        
 
 
-                                     V     V                               
+                                     V     V                           
 
 
-                                        V                                  
+                                        V                              
 ```
 
 ## **Question 17**
@@ -426,5 +426,103 @@ let rec est_saut_multiple (liste_cases:case list)(config:configuration):bool =
   match liste_cases with
   |[c1;c2] -> est_saut c1 c2 config
   |c1::fin -> let c2::fin2=fin in est_saut c1 c2 config && est_saut_multiple fin config
+;;
+```
+
+## Question 25
+
+```
+let rec liste_est_dans_etoile (liste_cases:case list)(config:configuration):bool =
+  match liste_cases with
+  | [] -> true
+  | c::fin -> let (_,_,dim)=config in est_dans_etoile c dim && liste_est_dans_etoile fin config
+;;
+
+let est_coup_valide_1 (conf:configuration) (liste_cases:case list) : bool =
+  if List.length liste_cases = 2 then 
+    let [c1;c2] = liste_cases in
+    let (liste_case_coloree,liste_couleur,dim)=conf in
+    let joueur_courant::fin= liste_couleur in
+    (sont_cases_voisines c1 c2) && 
+    (associe c1 liste_case_coloree Libre)=joueur_courant &&
+    (associe c2 liste_case_coloree Libre)=Libre &&
+    (est_dans_losange c2 dim)
+  else
+    est_saut_multiple liste_cases conf &&
+    liste_est_dans_etoile liste_cases conf &&
+    let (liste_case_coloree,liste_couleur,dim)=conf in est_dans_losange (der_liste liste_cases) dim
+    && (let c1::fin=liste_cases in let (liste_case_coloree,liste_couleur,dim)=conf in
+      let joueur_courant::fin= liste_couleur in (associe c1 liste_case_coloree Libre)=joueur_courant)
+;;
+
+let appliquer_coup_1 (conf:configuration) (liste_cases:case list) : configuration =
+  let c1::fin = liste_cases in
+  let c2=der_liste liste_cases in
+  let (liste_case_coloree,liste_couleur,dim)=conf in
+  let joueur_courant::fin= liste_couleur in
+  let nouvelle_conf=supprime_dans_config conf c1 in
+  let (liste_case_coloree,liste_couleur,dim)=nouvelle_conf in
+  (liste_case_coloree@[(c2,joueur_courant)],liste_couleur,dim)
+;;
+
+let mettre_a_jour_configuration_1 (conf:configuration) (liste_cases:case list) : configuration =
+    if est_coup_valide_1 conf liste_cases then  appliquer_coup_1 conf liste_cases else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
+;;
+```
+
+## Question 26
+
+```
+let augmente_score (score,conf:int*configuration) ((i,j,k),couleur : case_coloree) : int*configuration =
+  let (liste_case_coloree,liste_couleur,dim) = conf in
+  let protagoniste::_ = liste_couleur in
+  if couleur = protagoniste then (score + i,conf) else (score,conf);;
+
+let score (conf:configuration) : int =
+  let (liste_case_coloree,liste_couleur,dim)= conf in
+  let score_joueur,_=(List.fold_left augmente_score (0,conf) liste_case_coloree) in 
+  score_joueur
+;;
+
+let rec score_max_joueur (ligne:int)(dim:dimension) : int =
+  match ligne with
+  | 0 -> 0
+  | n -> (dim+1-n)*(dim+n) + score_max_joueur (n-1) dim
+;;
+
+let score_gagnant (dim:dimension) : int =
+  score_max_joueur dim dim
+;;
+```
+
+## Question 27
+
+```
+let score_gagnant (dim:dimension) : int =
+  score_max_joueur dim dim
+;;
+
+let gagne (conf:configuration) : bool =
+  let (_,_,dim)= conf in
+  score conf = score_gagnant dim
+;;
+```
+
+## Question 28
+
+```
+
+let manche (conf,co:configuration*couleur) (c:coup): configuration*couleur =
+  if co==Libre then
+    let nouvelle_conf=mettre_a_jour_configuration conf c in
+    let gagnant= if gagne nouvelle_conf then let (_,joueur_courant::fin,_)= nouvelle_conf in joueur_courant else Libre in
+    tourner_config nouvelle_conf, gagnant
+  else
+    conf,co
+  ;;
+
+let est_partie (conf:configuration) (liste_coup:coup list): couleur =
+  let _,couleur = List.fold_left manche (conf,Libre) liste_coup in
+  couleur
 ;;
 ```
