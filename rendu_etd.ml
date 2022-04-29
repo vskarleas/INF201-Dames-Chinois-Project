@@ -139,6 +139,7 @@ let abs (x:int) : int =
 
 let calcul_pivot ((x1,y1,z1):case) ((x2,y2,z2):case) : case option =
   let (x,y,z)=(x2-x1,y2-y1,z2-z1) in
+  if (y=z || x=y || x=z) then Some((x1+x2)/2,(y1+y2)/2,(z1+z2)/2) else
   if x=0 then if y= -z && (abs(y) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
   else if y=0 then if x= -z && (abs(x) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
   else if z=0 then if y= -x && (abs(y) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
@@ -236,7 +237,7 @@ let rec supprime_dans_config (conf:configuration) (c:case) : configuration =
   ((List.filter (fun (ca,co) -> ca<>c) liste_case_coloree),liste_couleur,dim)
 ;;
 
-let est_coup_valide (conf:configuration) (Du(c1,c2):coup) : bool =
+let est_coup_valide_1 (conf:configuration) (Du(c1,c2):coup) : bool =
   let (liste_case_coloree,liste_couleur,dim)=conf in
   let joueur_courant::fin= liste_couleur in
   (sont_cases_voisines c1 c2) && 
@@ -245,7 +246,7 @@ let est_coup_valide (conf:configuration) (Du(c1,c2):coup) : bool =
   (est_dans_losange c2 dim)
 ;;
 
-let appliquer_coup (conf:configuration) (Du(c1,c2)) : configuration =
+let appliquer_coup_1 (conf:configuration) (Du(c1,c2)) : configuration =
   let (liste_case_coloree,liste_couleur,dim)=conf in
   let joueur_courant::fin= liste_couleur in
   let nouvelle_conf=supprime_dans_config conf c1 in
@@ -253,8 +254,8 @@ let appliquer_coup (conf:configuration) (Du(c1,c2)) : configuration =
   (liste_case_coloree@[(c2,joueur_courant)],liste_couleur,dim)
 ;;
 
-let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
-  if est_coup_valide conf c then  appliquer_coup conf c else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
+let mettre_a_jour_configuration_1 (conf:configuration) (c:coup) : configuration =
+  if est_coup_valide_1 conf c then  appliquer_coup_1 conf c else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
 ;;
 
 let addition_vecteur ((x1,x2,x3):case)((y1,y2,y3):case):case =
@@ -277,8 +278,8 @@ let est_saut (c1:case)(c2:case)(c:configuration):bool =
   let pivot=(calcul_pivot c1 c2) in
   let vec,_=vec_et_dist c1 c2 in
   if pivot=None then false
-  else let Some(case_pivot)=pivot in (est_libre_seg c1 (soustraction_vecteur case_pivot vec) c) &&
-  (est_libre_seg case_pivot c2 c) &&
+  else let Some(case_pivot)=pivot in (*(est_libre_seg c1 (soustraction_vecteur case_pivot vec) c) &&
+  (est_libre_seg case_pivot c2 c) &&*)
   (quelle_couleur c2 c)=Libre
   [@@warning "-8"];;
 
@@ -295,16 +296,16 @@ let rec liste_est_dans_etoile (liste_cases:case list)(config:configuration):bool
   | c::fin -> let (_,_,dim)=config in est_dans_etoile c dim && liste_est_dans_etoile fin config
 ;;
 
-let est_coup_valide_1 (conf:configuration) (Sm liste_cases:coup) : bool =
-  if List.length liste_cases = 2 then 
-    let [c1;c2] = liste_cases in
+let est_coup_valide (conf:configuration) (c:coup) : bool =
+  match c with
+  | Du(c1,c2)-> 
     let (liste_case_coloree,liste_couleur,dim)=conf in
     let joueur_courant::fin= liste_couleur in
     (sont_cases_voisines c1 c2) && 
     (associe c1 liste_case_coloree Libre)=joueur_courant &&
     (associe c2 liste_case_coloree Libre)=Libre &&
     (est_dans_losange c2 dim)
-  else
+  | Sm (liste_cases) -> 
     est_saut_multiple liste_cases conf &&
     liste_est_dans_etoile liste_cases conf &&
     let (liste_case_coloree,liste_couleur,dim)=conf in est_dans_losange (der_liste liste_cases) dim
@@ -312,7 +313,14 @@ let est_coup_valide_1 (conf:configuration) (Sm liste_cases:coup) : bool =
       let joueur_courant::fin= liste_couleur in (associe c1 liste_case_coloree Libre)=joueur_courant)
 ;;
 
-let appliquer_coup_1 (conf:configuration) (Sm liste_cases:coup) : configuration =
+let appliquer_coup (conf:configuration) (c:coup) : configuration =
+  match c with
+  | Du(c1,c2) -> let (liste_case_coloree,liste_couleur,dim)=conf in
+  let joueur_courant::fin= liste_couleur in
+  let nouvelle_conf=supprime_dans_config conf c1 in
+  let (liste_case_coloree,liste_couleur,dim)=nouvelle_conf in
+  (liste_case_coloree@[(c2,joueur_courant)],liste_couleur,dim)
+  | Sm (liste_cases) ->
   let c1::fin = liste_cases in
   let c2=der_liste liste_cases in
   let (liste_case_coloree,liste_couleur,dim)=conf in
@@ -322,12 +330,14 @@ let appliquer_coup_1 (conf:configuration) (Sm liste_cases:coup) : configuration 
   (liste_case_coloree@[(c2,joueur_courant)],liste_couleur,dim)
 ;;
 
-let mettre_a_jour_configuration_1 (conf:configuration) (c:coup) : configuration =
-    if est_coup_valide_1 conf c then  appliquer_coup_1 conf c else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
+let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
+    if est_coup_valide conf c then  appliquer_coup conf c else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
 ;;
 
-let conf_essai = ([(-6, 3, 3),Vert; (-4, 3, 1),Vert; (-1, 2, -1),Vert],[Vert], 3)
-let coup_essai = [(-6, 3, 3); (-2, 3, -1); (0, 1, -1)]
+let conf_essai_chacal = ([(-6, 3, 3),Vert; (-4, 3, 1),Vert; (0, 1, -1),Vert; (-5, 3, 2),Vert],[Vert], 3)
+let coup_essai_chacal : coup = Sm([(-6, 3, 3); (-2, 3, -1); (2, -1, -1)])
+
+let coup_essai_1 : coup = Du((-6,3,3),(-5,3,2))
 
 let augmente_score (score,conf:int*configuration) ((i,j,k),couleur : case_coloree) : int*configuration =
   let (liste_case_coloree,liste_couleur,dim) = conf in
@@ -359,6 +369,7 @@ let gagne (conf:configuration) : bool =
 
 let manche (conf,co:configuration*couleur) (c:coup): configuration*couleur =
   if co==Libre then
+    let x=affiche conf in
     let nouvelle_conf=mettre_a_jour_configuration conf c in
     let gagnant= if gagne nouvelle_conf then let (_,joueur_courant::fin,_)= nouvelle_conf in joueur_courant else Libre in
     tourner_config nouvelle_conf, gagnant
@@ -367,13 +378,14 @@ let manche (conf,co:configuration*couleur) (c:coup): configuration*couleur =
   ;;
 
 let est_partie (conf:configuration) (liste_coup:coup list): couleur =
-  let _,couleur = List.fold_left manche (conf,Libre) liste_coup in
+  let conf,couleur = List.fold_left manche (conf,Libre) liste_coup in
+  let x=affiche conf in
   couleur
 ;;
 
 let liste_coup_test : coup list = 
-[Du((-6, 3, 3), (-2, 1, 1));
-Du((-5, 3, 2), (-3, 3, 0));
+[Sm([(-6, 3, 3); (-2, 1, 1)]);
+Sm([(-5, 3, 2); (-3, 3, 0)]);
 Sm([(-5, 2, 3); (-3, 2, 1)]);
 Sm([(-4, 2, 2); (0, 0, 0)]);
 Sm([(-5, 2, 3); (-3, 2, 1)]);
@@ -420,6 +432,57 @@ Sm([(1, -1, 0); (5, -3, -2)]);
 Du((0, -1, 1), (1, -1, 0));
 Sm([(1, -1, 0); (3, -1, -2)]);
 Sm([(3, -2, -1); (5, -2, -3)]);]
+;;
+
+let liste_coup_test_2 : coup list = 
+
+  [Du((-4, 3, 1), (-3, 2, 1));
+  Du((-4, 3, 1), (-3, 2, 1));
+  Sm([(-5, 3, 2); (-3, 1, 2)]);
+  Sm([(-6, 3, 3); (-4, 3, 1); (-2, 1, 1)]);
+  Sm([(-5, 3, 2); (-3, 1, 2)]);
+  Du((-4, 2, 2), (-3, 2, 1));
+  Sm([(-4, 1, 3); (0, 1, -1)]);
+  Sm([(-4, 1, 3); (-2, 1, 1)]);
+  Sm([(-5, 2, 3); (-1, 2, -1)]);
+  Sm([(-5, 3, 2); (-3, 1, 2); (-1, 1, 0); (1, 1, -2)]);
+  Sm([(-4, 2, 2); (-2, 0, 2); (0, -2, 2); (2, -4, 2); (2, -2, 0)]);
+  Sm([(-6, 3, 3); (-2, 3, -1); (0, 1, -1)]);
+  Sm([(0, 1, -1); (4, -3, -1)]);
+  Sm([(-3, 2, 1); (-3, 0, 3); (1, 0, -1); (1, 2, -3); (3, 0, -3)]);
+  Sm([(-3, 1, 2); (-1, 1, 0); (-1, 3, -2); (3, -1, -2)]);
+  Sm([(-4, 2, 2); (-2, 2, 0); (2, 2, -4); (2, 0, -2)]);
+  Sm([(-2, 1, 1); (0, -1, 1); (2, -3, 1); (2, -1, -1)]);
+  Sm([(-1, 2, -1); (1, 0, -1)]);
+  Sm([(1, 1, -2); (-1, 3, -2); (-1, 1, 0); (3, -3, 0); (5, -3, -2)]);
+  Sm([(-6, 3, 3); (-4, 1, 3); (-2, 1, 1); (0, -1, 1); (4, -1, -3)]);
+  Sm([(-4, 3, 1); (-2, 1, 1); (-2, -1, 3); (0, -1, 1); (0, 3, -3); (2, 1, -3)]);
+  Du((-5, 2, 3), (-4, 2, 2));
+  Sm([(-5, 2, 3); (-1, 2, -1)]);
+  Sm([(-3, 2, 1); (-1, 2, -1); (3, 2, -5); (3, -4, 1); (1, -4, 3); (-1, -2, 3); (-1, 0, 1); (3, 0, -3); (3, -2, -1)]);
+  Sm([(-4, 2, 2); (-2, 2, 0); (-2, 0, 2); (0, -2, 2); (2, -4, 2); (2, -2, 0)]);
+  Sm([(-3, 1, 2); (-3, 3, 0); (1, -1, 0); (3, -3, 0)]);
+  Sm([(0, 1, -1); (0, 3, -3); (4, -1, -3)]);
+  Sm([(-2, 1, 1); (2, -3, 1); (2, -1, -1)]);
+  Sm([(-1, 2, -1); (-1, 0, 1); (-1, -2, 3); (1, -2, 1); (3, -2, -1); (1, 0, -1); (3, -2, -1)]);
+  Sm([(2, 1, -3); (6, -3, -3)]);
+  Du((-3, 2, 1), (-2, 1, 1));
+  Sm([(2, -2, 0); (4, -2, -2)]);
+  Du((-4, 1, 3), (-3, 1, 2));
+  Sm([(-2, 1, 1); (2, -3, 1)]);
+  Sm([(3, 0, -3); (5, -2, -3)]);
+  Sm([(-3, 1, 2); (1, -3, 2)]);
+  Du((2, -1, -1), (3, -1, -2));
+  Sm([(4, -1, -3); (6, -3, -3)]);
+  Du((1, -3, 2), (1, -2, 1));
+  Sm([(2, -3, 1); (2, -1, -1); (4, -1, -3)]);
+  Sm([(2, -1, -1); (4, -3, -1); (4, -1, -3)]);
+  Sm([(1, -2, 1); (5, -2, -3)]);
+  Du((2, -2, 0), (2, -1, -1));
+  Du((3, -2, -1), (4, -3, -1));
+  Du((1, 0, -1), (2, 0, -2));
+  Sm([(2, -1, -1); (2, 1, -3); (6, -3, -3)]);
+  Sm([(3, -3, 0); (5, -3, -2)])]
 ;;
 
 let conf_essai : configuration =
