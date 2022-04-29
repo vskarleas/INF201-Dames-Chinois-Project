@@ -398,7 +398,7 @@ let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
 
 ### Implementation
 
-```
+```ocaml
 let rec est_libre_seg (c1:case)(c2:case)(c:configuration):bool=
 let (vec,dist)=vec_et_dist c1 c2 in match dist with
 | 1 -> true
@@ -410,7 +410,7 @@ let (vec,dist)=vec_et_dist c1 c2 in match dist with
 
 ### Implementation
 
-```
+```ocaml
 let est_saut (c1:case)(c2:case)(c:configuration):bool =
   let pivot=(calcul_pivot c1 c2) in
   if pivot=None then false
@@ -421,7 +421,7 @@ let est_saut (c1:case)(c2:case)(c:configuration):bool =
 
 ### Implementation
 
-```
+```ocaml
 let rec est_saut_multiple (liste_cases:case list)(config:configuration):bool =
   match liste_cases with
   |[c1;c2] -> est_saut c1 c2 config
@@ -431,7 +431,7 @@ let rec est_saut_multiple (liste_cases:case list)(config:configuration):bool =
 
 ## Question 25
 
-```
+```ocaml
 let rec liste_est_dans_etoile (liste_cases:case list)(config:configuration):bool =
   match liste_cases with
   | [] -> true
@@ -472,7 +472,7 @@ let mettre_a_jour_configuration_1 (conf:configuration) (liste_cases:case list) :
 
 ## Question 26
 
-```
+```ocaml
 let augmente_score (score,conf:int*configuration) ((i,j,k),couleur : case_coloree) : int*configuration =
   let (liste_case_coloree,liste_couleur,dim) = conf in
   let protagoniste::_ = liste_couleur in
@@ -497,7 +497,7 @@ let score_gagnant (dim:dimension) : int =
 
 ## Question 27
 
-```
+```ocaml
 let score_gagnant (dim:dimension) : int =
   score_max_joueur dim dim
 ;;
@@ -510,7 +510,7 @@ let gagne (conf:configuration) : bool =
 
 ## Question 28
 
-```
+```ocaml
 
 let manche (conf,co:configuration*couleur) (c:coup): configuration*couleur =
   if co==Libre then
