@@ -22,7 +22,6 @@ let indice_valide (x:int) (dim:dimension) : bool =
 let est_case ((i,j,k):case):bool=
  (i+j+k=0);;
 
-(*A REMPLIR*)
 let est_dans_etoile ((i, j, k) : case) (dim:dimension) : bool = 
   (i>= -dim && j>= -dim && k>= -dim) || (i<=dim && j<=dim && k<=dim)
 
@@ -90,10 +89,6 @@ let conf_init : configuration =
    [Vert; Jaune], 2);;
 
 affiche conf_init;;
-
-(*A essayer apres avoir fait remplir_init
-affiche (remplir_init [Code "Ali";Code "Bob";Code "Jim"] 3);;
-*)
 
 let tourner_case (m:int) (c:case) : case =
   let rec tourner_case_1 (m:int) (c:case) : case =
@@ -274,11 +269,9 @@ let est_saut (c1:case)(c2:case)(c:configuration):bool =
   let pivot=(calcul_pivot c1 c2) in
   let vec,_=vec_et_dist c1 c2 in
   if pivot=None then false
-  else let Some(case_pivot)=pivot in (*(est_libre_seg c1 (soustraction_vecteur case_pivot vec) c) &&
-  (est_libre_seg case_pivot c2 c) &&*)
+  else let Some(case_pivot)=pivot in
   (quelle_couleur c2 c)=Libre
-  [@@warning "-8"];;
-
+;;
 
 let rec est_saut_multiple (liste_cases:case list)(config:configuration):bool =
   match liste_cases with
