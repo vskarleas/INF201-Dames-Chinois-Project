@@ -107,6 +107,7 @@ let abs (x:int) : int =
 
 let calcul_pivot ((x1,y1,z1):case) ((x2,y2,z2):case) : case option =
   let (x,y,z)=(x2-x1,y2-y1,z2-z1) in
+  if (y=z || x=y || x=z) then Some((x1+x2)/2,(y1+y2)/2,(z1+z2)/2) else
   if x=0 then if y= -z && (abs(y) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
   else if y=0 then if x= -z && (abs(x) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
   else if z=0 then if y= -x && (abs(y) mod 2)=0 then Some ((x2+x1)/2,(y2+y1)/2,(z2+z1)/2) else None
@@ -128,7 +129,7 @@ let vec_et_dist ((x1,y1,z1):case) ((x2,y2,z2):case) : vecteur*int =
     (x/d,y/d,z/d),d
     else
       let d=abs x in
-      (x/d,y/d,z/d),d (*Demander au prof d'ocaml*)
+      (x/d,y/d,z/d),d
 ;;
 ```
 
@@ -266,7 +267,7 @@ let rec tourner_liste_case_coloree (m:int) (liste_case_coloree:case_coloree list
 let tourner_config (config:configuration) : configuration =
   let (liste_case_coloree,liste_couleur,dim)=config in
   let nb_joueurs=nombre_joueurs liste_couleur in
-  (tourner_liste_case_coloree (6/nb_joueurs) liste_case_coloree,liste_couleur,dim)
+  (tourner_liste_case_coloree (6/nb_joueurs) liste_case_coloree,tourner_liste liste_couleur,dim)
 ;;
 ```
 
@@ -343,7 +344,7 @@ let quelle_couleur (ca:case) (co:configuration) : couleur =
 ;;
 ```
 
-### **Question 18**
+## **Question 18**
 
 ### Implémentation
 
