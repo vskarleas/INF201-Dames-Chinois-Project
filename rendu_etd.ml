@@ -268,14 +268,19 @@ let (vec,dist)=vec_et_dist c1 c2 in match dist with
 | 1 -> (quelle_couleur c2 c)=Libre
 | x -> (quelle_couleur (addition_vecteur c1 vec) c)=Libre && (est_libre_seg (addition_vecteur c1 vec) c2 c)
 ;;
-(*
+
+let vecVcase (vec:vecteur):case =
+  vec
+;;
+
 let est_saut (c1:case)(c2:case)(c:configuration):bool =
   let pivot=(calcul_pivot c1 c2) in
   let vec,_=vec_et_dist c1 c2 in
   if pivot=None then false
-  else let Some(case_pivot)=pivot in let  (est_libre_seg c1 (soustraction_vecteur case_pivot vec) c) &&
+  else let Some(case_pivot)=pivot in (est_libre_seg c1 (soustraction_vecteur case_pivot vec) c) &&
   (est_libre_seg case_pivot c2 c) &&
-  (quelle_couleur c2 c)=Libre;;
+  (quelle_couleur c2 c)=Libre
+  [@@warning "-8"];;
 
 
 let rec est_saut_multiple (liste_cases:case list)(config:configuration):bool =
@@ -283,14 +288,14 @@ let rec est_saut_multiple (liste_cases:case list)(config:configuration):bool =
   |[c1;c2] -> est_saut c1 c2 config
   |c1::fin -> let c2::fin2=fin in est_saut c1 c2 config && est_saut_multiple fin config
 ;;
-on verifie est saut mais est saut vérifie que la case contient la couleur du joueur
+(*on verifie est saut mais est saut vérifie que la case contient la couleur du joueur*)
 let rec liste_est_dans_etoile (liste_cases:case list)(config:configuration):bool =
   match liste_cases with
   | [] -> true
   | c::fin -> let (_,_,dim)=config in est_dans_etoile c dim && liste_est_dans_etoile fin config
 ;;
 
-let est_coup_valide_1 (conf:configuration) (liste_cases:case list) : bool =
+let est_coup_valide_1 (conf:configuration) (Sm liste_cases:coup) : bool =
   if List.length liste_cases = 2 then 
     let [c1;c2] = liste_cases in
     let (liste_case_coloree,liste_couleur,dim)=conf in
@@ -307,7 +312,7 @@ let est_coup_valide_1 (conf:configuration) (liste_cases:case list) : bool =
       let joueur_courant::fin= liste_couleur in (associe c1 liste_case_coloree Libre)=joueur_courant)
 ;;
 
-let appliquer_coup_1 (conf:configuration) (liste_cases:case list) : configuration =
+let appliquer_coup_1 (conf:configuration) (Sm liste_cases:coup) : configuration =
   let c1::fin = liste_cases in
   let c2=der_liste liste_cases in
   let (liste_case_coloree,liste_couleur,dim)=conf in
@@ -317,10 +322,10 @@ let appliquer_coup_1 (conf:configuration) (liste_cases:case list) : configuratio
   (liste_case_coloree@[(c2,joueur_courant)],liste_couleur,dim)
 ;;
 
-let mettre_a_jour_configuration_1 (conf:configuration) (liste_cases:case list) : configuration =
-    if est_coup_valide_1 conf liste_cases then  appliquer_coup_1 conf liste_cases else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
+let mettre_a_jour_configuration_1 (conf:configuration) (c:coup) : configuration =
+    if est_coup_valide_1 conf c then  appliquer_coup_1 conf c else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
 ;;
-*)
+
 let conf_essai = ([(-6, 3, 3),Vert; (-4, 3, 1),Vert; (-1, 2, -1),Vert],[Vert], 3)
 let coup_essai = [(-6, 3, 3); (-2, 3, -1); (0, 1, -1)]
 
