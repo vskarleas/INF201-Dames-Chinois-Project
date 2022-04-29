@@ -283,7 +283,7 @@ let rec est_saut_multiple (liste_cases:case list)(config:configuration):bool =
   |[c1;c2] -> est_saut c1 c2 config
   |c1::fin -> let c2::fin2=fin in est_saut c1 c2 config && est_saut_multiple fin config
 ;;
-
+on verifie est saut mais est saut vérifie que la case contient la couleur du joueur
 let rec liste_est_dans_etoile (liste_cases:case list)(config:configuration):bool =
   match liste_cases with
   | [] -> true
