@@ -270,10 +270,6 @@ let (vec,dist)=vec_et_dist c1 c2 in match dist with
 | x -> (quelle_couleur (addition_vecteur c1 vec) c)=Libre && (est_libre_seg (addition_vecteur c1 vec) c2 c)
 ;;
 
-let vecVcase (vec:vecteur):case =
-  vec
-;;
-
 let est_saut (c1:case)(c2:case)(c:configuration):bool =
   let pivot=(calcul_pivot c1 c2) in
   let vec,_=vec_et_dist c1 c2 in
@@ -289,7 +285,7 @@ let rec est_saut_multiple (liste_cases:case list)(config:configuration):bool =
   |[c1;c2] -> est_saut c1 c2 config
   |c1::fin -> let c2::fin2=fin in est_saut c1 c2 config && est_saut_multiple fin config
 ;;
-(*on verifie est saut mais est saut vérifie que la case contient la couleur du joueur*)
+
 let rec liste_est_dans_etoile (liste_cases:case list)(config:configuration):bool =
   match liste_cases with
   | [] -> true
@@ -334,11 +330,6 @@ let mettre_a_jour_configuration (conf:configuration) (c:coup) : configuration =
     if est_coup_valide conf c then  appliquer_coup conf c else failwith "Ce coup n'est pas valide, le joueur doit rejouer"
 ;;
 
-let conf_essai_chacal = ([(-6, 3, 3),Vert; (-4, 3, 1),Vert; (0, 1, -1),Vert; (-5, 3, 2),Vert],[Vert], 3)
-let coup_essai_chacal : coup = Sm([(-6, 3, 3); (-2, 3, -1); (2, -1, -1)])
-
-let coup_essai_1 : coup = Du((-6,3,3),(-5,3,2))
-
 let augmente_score (score,conf:int*configuration) ((i,j,k),couleur : case_coloree) : int*configuration =
   let (liste_case_coloree,liste_couleur,dim) = conf in
   let protagoniste::_ = liste_couleur in
@@ -349,8 +340,6 @@ let score (conf:configuration) : int =
   let score_joueur,_=(List.fold_left augmente_score (0,conf) liste_case_coloree) in 
   score_joueur
 ;;
-
-let conf_essai :configuration = ([(1, -1, 0),Vert; (0, 1, -1),Vert; (-1, 0, 1),Rouge; (-1, -1, 2), Vert; (2, -2, 2),Vert],[Rouge;Vert],3);;
 
 let rec score_max_joueur (ligne:int)(dim:dimension) : int =
   match ligne with
@@ -382,108 +371,3 @@ let est_partie (conf:configuration) (liste_coup:coup list): couleur =
   let x=affiche conf in
   couleur
 ;;
-
-let liste_coup_test : coup list = 
-[Sm([(-6, 3, 3); (-2, 1, 1)]);
-Sm([(-5, 3, 2); (-3, 3, 0)]);
-Sm([(-5, 2, 3); (-3, 2, 1)]);
-Sm([(-4, 2, 2); (0, 0, 0)]);
-Sm([(-5, 2, 3); (-3, 2, 1)]);
-Sm([(-5, 3, 2); (-3, 3, 0)]);
-Sm([(-2, 1, 1); (2, -1, -1)]);
-Sm([(-4, 2, 2); (-2, 2, 0)]);
-Sm([(-4, 3, 1); (-2, 1, 1)]);
-Sm([(-5, 3, 2); (-3, 3, 0)]);
-Sm([(-4, 3, 1); (-2, 1, 1)]);
-Sm([(-4, 2, 2); (-2, 2, 0)]);
-Sm([(0, 0, 0); (4, -2, -2)]);
-Sm([(-3, 2, 1); (-1, 0, 1)]);
-Sm([(-3, 2, 1); (-1, 0, 1)]);
-Sm([(-5, 2, 3); (-3, 0, 3)]);
-Sm([(-1, 0, 1); (3, -2, -1)]);
-Sm([(-6, 3, 3); (2, -1, -1)]);
-Sm([(2, -1, -1); (6, -3, -3)]);
-Sm([(-4, 1, 3); (0, 1, -1)]);
-Sm([(-1, 0, 1); (3, -2, -1)]);
-Sm([(-3, 0, 3); (1, 0, -1)]);
-Sm([(-2, 2, 0); (2, 0, -2)]);
-Sm([(-2, 1, 1); (6, -3, -3)]);
-Sm([(-4, 3, 1); (0, 1, -1)]);
-Sm([(-3, 3, 0); (-1, -1, 2)]);
-Sm([(2, -1, -1); (4, -3, -1)]);
-Sm([(0, 1, -1); (4, -1, -3)]);
-Sm([(-2, 1, 1); (2, 1, -3)]);
-Sm([(-2, 2, 0); (0, 0, 0)]);
-Sm([(1, 0, -1); (3, -2, -1)]);
-Sm([(-6, 3, 3); (6, -3, -3)]);
-Sm([(-4, 1, 3); (4, -1, -3)]);
-Sm([(3, -2, -1); (5, -2, -3)]);
-Sm([(2, 1, -3); (4, -1, -3)]);
-Sm([(0, 0, 0); (2, -2, 0)]);
-Sm([(-4, 1, 3); (0, -1, 1)]);
-Du((-1, -1, 2), (0, -1, 1));
-Sm([(2, -2, 0); (4, -2, -2)]);
-Sm([(-3, 3, 0); (-1, 1, 0)]);
-Sm([(0, 1, -1); (2, -1, -1)]);
-Sm([(-3, 3, 0); (1, -1, 0)]);
-Sm([(-1, 1, 0); (3, -1, -2)]);
-Du((0, -1, 1), (1, -1, 0));
-Sm([(1, -1, 0); (5, -3, -2)]);
-Du((0, -1, 1), (1, -1, 0));
-Sm([(1, -1, 0); (3, -1, -2)]);
-Sm([(3, -2, -1); (5, -2, -3)]);]
-;;
-
-let liste_coup_test_2 : coup list = 
-
-  [Du((-4, 3, 1), (-3, 2, 1));
-  Du((-4, 3, 1), (-3, 2, 1));
-  Sm([(-5, 3, 2); (-3, 1, 2)]);
-  Sm([(-6, 3, 3); (-4, 3, 1); (-2, 1, 1)]);
-  Sm([(-5, 3, 2); (-3, 1, 2)]);
-  Du((-4, 2, 2), (-3, 2, 1));
-  Sm([(-4, 1, 3); (0, 1, -1)]);
-  Sm([(-4, 1, 3); (-2, 1, 1)]);
-  Sm([(-5, 2, 3); (-1, 2, -1)]);
-  Sm([(-5, 3, 2); (-3, 1, 2); (-1, 1, 0); (1, 1, -2)]);
-  Sm([(-4, 2, 2); (-2, 0, 2); (0, -2, 2); (2, -4, 2); (2, -2, 0)]);
-  Sm([(-6, 3, 3); (-2, 3, -1); (0, 1, -1)]);
-  Sm([(0, 1, -1); (4, -3, -1)]);
-  Sm([(-3, 2, 1); (-3, 0, 3); (1, 0, -1); (1, 2, -3); (3, 0, -3)]);
-  Sm([(-3, 1, 2); (-1, 1, 0); (-1, 3, -2); (3, -1, -2)]);
-  Sm([(-4, 2, 2); (-2, 2, 0); (2, 2, -4); (2, 0, -2)]);
-  Sm([(-2, 1, 1); (0, -1, 1); (2, -3, 1); (2, -1, -1)]);
-  Sm([(-1, 2, -1); (1, 0, -1)]);
-  Sm([(1, 1, -2); (-1, 3, -2); (-1, 1, 0); (3, -3, 0); (5, -3, -2)]);
-  Sm([(-6, 3, 3); (-4, 1, 3); (-2, 1, 1); (0, -1, 1); (4, -1, -3)]);
-  Sm([(-4, 3, 1); (-2, 1, 1); (-2, -1, 3); (0, -1, 1); (0, 3, -3); (2, 1, -3)]);
-  Du((-5, 2, 3), (-4, 2, 2));
-  Sm([(-5, 2, 3); (-1, 2, -1)]);
-  Sm([(-3, 2, 1); (-1, 2, -1); (3, 2, -5); (3, -4, 1); (1, -4, 3); (-1, -2, 3); (-1, 0, 1); (3, 0, -3); (3, -2, -1)]);
-  Sm([(-4, 2, 2); (-2, 2, 0); (-2, 0, 2); (0, -2, 2); (2, -4, 2); (2, -2, 0)]);
-  Sm([(-3, 1, 2); (-3, 3, 0); (1, -1, 0); (3, -3, 0)]);
-  Sm([(0, 1, -1); (0, 3, -3); (4, -1, -3)]);
-  Sm([(-2, 1, 1); (2, -3, 1); (2, -1, -1)]);
-  Sm([(-1, 2, -1); (-1, 0, 1); (-1, -2, 3); (1, -2, 1); (3, -2, -1); (1, 0, -1); (3, -2, -1)]);
-  Sm([(2, 1, -3); (6, -3, -3)]);
-  Du((-3, 2, 1), (-2, 1, 1));
-  Sm([(2, -2, 0); (4, -2, -2)]);
-  Du((-4, 1, 3), (-3, 1, 2));
-  Sm([(-2, 1, 1); (2, -3, 1)]);
-  Sm([(3, 0, -3); (5, -2, -3)]);
-  Sm([(-3, 1, 2); (1, -3, 2)]);
-  Du((2, -1, -1), (3, -1, -2));
-  Sm([(4, -1, -3); (6, -3, -3)]);
-  Du((1, -3, 2), (1, -2, 1));
-  Sm([(2, -3, 1); (2, -1, -1); (4, -1, -3)]);
-  Sm([(2, -1, -1); (4, -3, -1); (4, -1, -3)]);
-  Sm([(1, -2, 1); (5, -2, -3)]);
-  Du((2, -2, 0), (2, -1, -1));
-  Du((3, -2, -1), (4, -3, -1));
-  Du((1, 0, -1), (2, 0, -2));
-  Sm([(2, -1, -1); (2, 1, -3); (6, -3, -3)]);
-  Sm([(3, -3, 0); (5, -3, -2)])]
-;;
-
-let conf_essai : configuration =
-  ([(-4, 1, 3),Vert; (-4, 2, 2), Vert; (-4, 3, 1),Vert; (-5, 3, 2), Vert; (-6, 3, 3),Vert; (-5, 2, 3),Vert; (3, -6, 3),Jaune; (3, -5, 2),Jaune; (3, -4, 1),Jaune; (2, -4, 2),Jaune; (1, -4, 3),Jaune; (2, -5, 3),Jaune; (3, 1, -4),Rouge; (2, 2, -4),Rouge; (1, 3, -4),Rouge; (3, 2, -5),Rouge; (2, 3, -5),Rouge; (3, 3, -6),Rouge], [Vert; Jaune; Rouge], 3);;
