@@ -289,44 +289,44 @@ let remplir_init (joueurs:couleur list) (dim:dimension) : configuration =
 
 ```ocaml
 affiche (remplir_init [Vert; Bleu; Code("Let")] 3);;
-                                                                
-                                        .                              
+                                                              
+                                        .                            
 
 
-                                     .     .                           
+                                     .     .                         
 
 
-                                  .     .     .                        
+                                  .     .     .                      
 
 
             Let   Let   Let    .     .     .     .     B     B     B   
 
 
-               Let   Let    .     .     .     .     .     B     B      
+               Let   Let    .     .     .     .     .     B     B    
 
 
-                  Let    .     .     .     .     .     .     B         
+                  Let    .     .     .     .     .     .     B       
 
 
-                      .     .     .     .     .     .     .            
+                      .     .     .     .     .     .     .          
 
 
-                   .     .     .     .     .     .     .     .         
+                   .     .     .     .     .     .     .     .       
 
 
-                .     .     .     .     .     .     .     .     .      
+                .     .     .     .     .     .     .     .     .    
 
 
              .     .     .     .     .     .     .     .     .     .   
 
 
-                                  V     V     V                        
+                                  V     V     V                      
 
 
-                                     V     V                           
+                                     V     V                         
 
 
-                                        V                              
+                                        V                            
 ```
 
 ## **Question 17**
